@@ -13,7 +13,7 @@ export default function ForgotPassword() {
         email,
         {
           redirectTo:
-            "http://localhost:5173/reset-password",
+            "https://khadimatoul.vercel.app/reset-password",
         }
       );
 
