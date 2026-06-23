@@ -26,27 +26,41 @@ if (!error) {
 
 setLoading(false);
 
-
 };
 
-
   // const approveRequest = async (request) => {
+  //   alert("APPROVE CLICKED");
+  //   console.log("APPROVE CLICKED");
+  //   console.log("REQUEST =", request);
   //   try {
+  //     console.log("===== APPROVE REQUEST =====");
+  //     console.log("REQUEST:", request);
 
   //     // Vérifier si le membre existe déjà
-  //     const { data: existingMember } = await supabase
+  //     const {
+  //       data: existingMember,
+  //       error: existingMemberError,
+  //     } = await supabase
   //       .from("members")
   //       .select("id")
   //       .eq("user_id", request.user_id)
   //       .maybeSingle();
 
+  //     console.log("EXISTING MEMBER:", existingMember);
+  //     console.log("EXISTING MEMBER ERROR:", existingMemberError);
+
+  //     if (existingMemberError) {
+  //       alert(JSON.stringify(existingMemberError));
+  //       return;
+  //     }
+
   //     let memberId;
 
   //     if (existingMember) {
   //       memberId = existingMember.id;
+  //       console.log("MEMBRE EXISTE DÉJÀ :", memberId);
   //     } else {
-
-  //       // Création du membre
+  //       console.log("CRÉATION DU MEMBRE...");
   //       const {
   //         data: memberData,
   //         error: memberError,
@@ -63,90 +77,144 @@ setLoading(false);
   //         .select()
   //         .single();
 
-  //       if (memberError) throw memberError;
+  //       console.log("MEMBER DATA:", memberData);
+  //       console.log("MEMBER ERROR:", memberError);
+
+  //       if (memberError) {
+  //         alert("ERREUR MEMBERS :\n" + JSON.stringify(memberError));
+  //         return;
+  //       }
 
   //       memberId = memberData.id;
   //     }
 
-  //     // Vérifier si une contribution existe déjà
+  //     console.log("MEMBER ID =", memberId);
+
   //     const currentYear = new Date().getFullYear();
 
-  //     const { data: existingContribution } =
-  //       await supabase
-  //         .from("contributions")
-  //         .select("id")
-  //         .eq("member_id", memberId)
-  //         .eq("year", currentYear)
-  //         .maybeSingle();
+  //     const {
+  //       data: existingContribution,
+  //       error: contributionCheckError,
+  //     } = await supabase
+  //       .from("contributions")
+  //       .select("id")
+  //       .eq("member_id", memberId)
+  //       .eq("year", currentYear)
+  //       .maybeSingle();
+
+  //     console.log(
+  //       "EXISTING CONTRIBUTION:",
+  //       existingContribution
+  //     );
+
+  //     console.log(
+  //       "CONTRIBUTION CHECK ERROR:",
+  //       contributionCheckError
+  //     );
+
+  //     if (contributionCheckError) {
+  //       alert(
+  //         "ERREUR CONTRIBUTION CHECK :\n" +
+  //           JSON.stringify(contributionCheckError)
+  //       );
+  //       return;
+  //     }
 
   //     if (!existingContribution) {
-  //       const { error: contributionError } =
-  //         await supabase
-  //           .from("contributions")
-  //           .insert({
-  //             member_id: memberId,
-  //             year: currentYear,
-  //           });
+  //       console.log("CRÉATION CONTRIBUTION...");
+
+  //       const {
+  //         error: contributionError,
+  //       } = await supabase
+  //         .from("contributions")
+  //         .insert({
+  //           member_id: memberId,
+  //           year: currentYear,
+  //         });
+
+  //       console.log(
+  //         "CONTRIBUTION ERROR:",
+  //         contributionError
+  //       );
 
   //       if (contributionError) {
-  //         throw contributionError;
+  //         alert(
+  //           "ERREUR CONTRIBUTION :\n" +
+  //             JSON.stringify(contributionError)
+  //         );
+  //         return;
   //       }
   //     }
 
-  //     // Mettre la demande en approuvée
-  //     const { error: requestError } =
-  //       await supabase
-  //         .from("membership_requests")
-  //         .update({
-  //           status: "approved",
-  //           approved_at: new Date().toISOString(),
-  //         })
-  //         .eq("id", request.id);
+  //     console.log("MISE À JOUR DE LA DEMANDE...");
 
-  //     if (requestError) throw requestError;
+  //     const {
+  //       error: requestError,
+  //     } = await supabase
+  //       .from("membership_requests")
+  //       .update({
+  //         status: "approved",
+  //         approved_at: new Date().toISOString(),
+  //       })
+  //       .eq("id", request.id);
+
+  //     console.log("REQUEST ERROR:", requestError);
+
+  //     if (requestError) {
+  //       alert(
+  //         "ERREUR UPDATE REQUEST :\n" +
+  //           JSON.stringify(requestError)
+  //       );
+  //       return;
+  //     }
 
   //     alert("✅ Membre approuvé avec succès.");
 
   //     fetchRequests();
 
   //   } catch (error) {
-  //     console.error(error);
-  //     alert(error.message);
+  //     console.error("ERREUR GLOBALE :", error);
+
+  //     alert(
+  //       "ERREUR GLOBALE :\n" +
+  //         JSON.stringify(error)
+  //     );
   //   }
   // };
 
   const approveRequest = async (request) => {
-    alert("APPROVE CLICKED");
-    console.log("APPROVE CLICKED");
-    console.log("REQUEST =", request);
     try {
-      console.log("===== APPROVE REQUEST =====");
-      console.log("REQUEST:", request);
+      alert("APPROVE CLICKED");
 
-      // Vérifier si le membre existe déjà
+      console.log("=================================");
+      console.log("APPROVE REQUEST");
+      console.log("REQUEST =", request);
+
+      // Vérifier si membre existe déjà
       const {
         data: existingMember,
         error: existingMemberError,
       } = await supabase
         .from("members")
-        .select("id")
+        .select("*")
         .eq("user_id", request.user_id)
         .maybeSingle();
 
-      console.log("EXISTING MEMBER:", existingMember);
-      console.log("EXISTING MEMBER ERROR:", existingMemberError);
+      console.log("EXISTING MEMBER =", existingMember);
+      console.log("EXISTING MEMBER ERROR =", existingMemberError);
 
       if (existingMemberError) {
-        alert(JSON.stringify(existingMemberError));
+        alert(
+          "ERREUR EXISTING MEMBER:\n" +
+            JSON.stringify(existingMemberError, null, 2)
+        );
         return;
       }
 
       let memberId;
 
-      if (existingMember) {
-        memberId = existingMember.id;
-        console.log("MEMBRE EXISTE DÉJÀ :", memberId);
-      } else {
+      // Création membre
+      if (!existingMember) {
         console.log("CRÉATION DU MEMBRE...");
 
         const {
@@ -162,22 +230,32 @@ setLoading(false);
             address: request.address,
             photo_url: request.photo_url,
           })
-          .select()
-          .single();
+          .select();
 
-        console.log("MEMBER DATA:", memberData);
-        console.log("MEMBER ERROR:", memberError);
+        console.log("MEMBER DATA =", memberData);
+        console.log("MEMBER ERROR =", memberError);
 
         if (memberError) {
-          alert("ERREUR MEMBERS :\n" + JSON.stringify(memberError));
+          alert(
+            "ERREUR INSERT MEMBER:\n" +
+              JSON.stringify(memberError, null, 2)
+          );
           return;
         }
 
-        memberId = memberData.id;
+        if (!memberData || memberData.length === 0) {
+          alert("AUCUN MEMBRE RETOURNÉ APRÈS INSERT");
+          return;
+        }
+
+        memberId = memberData[0].id;
+      } else {
+        memberId = existingMember.id;
       }
 
       console.log("MEMBER ID =", memberId);
 
+      // Vérifier contribution
       const currentYear = new Date().getFullYear();
 
       const {
@@ -185,25 +263,25 @@ setLoading(false);
         error: contributionCheckError,
       } = await supabase
         .from("contributions")
-        .select("id")
+        .select("*")
         .eq("member_id", memberId)
         .eq("year", currentYear)
         .maybeSingle();
 
       console.log(
-        "EXISTING CONTRIBUTION:",
+        "EXISTING CONTRIBUTION =",
         existingContribution
       );
 
       console.log(
-        "CONTRIBUTION CHECK ERROR:",
+        "CONTRIBUTION CHECK ERROR =",
         contributionCheckError
       );
 
       if (contributionCheckError) {
         alert(
-          "ERREUR CONTRIBUTION CHECK :\n" +
-            JSON.stringify(contributionCheckError)
+          "ERREUR CHECK CONTRIBUTION:\n" +
+            JSON.stringify(contributionCheckError, null, 2)
         );
         return;
       }
@@ -212,23 +290,30 @@ setLoading(false);
         console.log("CRÉATION CONTRIBUTION...");
 
         const {
+          data: contributionData,
           error: contributionError,
         } = await supabase
           .from("contributions")
           .insert({
             member_id: memberId,
             year: currentYear,
-          });
+          })
+          .select();
 
         console.log(
-          "CONTRIBUTION ERROR:",
+          "CONTRIBUTION DATA =",
+          contributionData
+        );
+
+        console.log(
+          "CONTRIBUTION ERROR =",
           contributionError
         );
 
         if (contributionError) {
           alert(
-            "ERREUR CONTRIBUTION :\n" +
-              JSON.stringify(contributionError)
+            "ERREUR INSERT CONTRIBUTION:\n" +
+              JSON.stringify(contributionError, null, 2)
           );
           return;
         }
@@ -237,6 +322,7 @@ setLoading(false);
       console.log("MISE À JOUR DE LA DEMANDE...");
 
       const {
+        data: requestData,
         error: requestError,
       } = await supabase
         .from("membership_requests")
@@ -244,28 +330,30 @@ setLoading(false);
           status: "approved",
           approved_at: new Date().toISOString(),
         })
-        .eq("id", request.id);
+        .eq("id", request.id)
+        .select();
 
-      console.log("REQUEST ERROR:", requestError);
+      console.log("REQUEST DATA =", requestData);
+      console.log("REQUEST ERROR =", requestError);
 
       if (requestError) {
         alert(
-          "ERREUR UPDATE REQUEST :\n" +
-            JSON.stringify(requestError)
+          "ERREUR UPDATE REQUEST:\n" +
+            JSON.stringify(requestError, null, 2)
         );
         return;
       }
 
-      alert("✅ Membre approuvé avec succès.");
+      alert("✅ Membre approuvé avec succès");
 
       fetchRequests();
 
     } catch (error) {
-      console.error("ERREUR GLOBALE :", error);
+      console.error("ERREUR GLOBALE =", error);
 
       alert(
-        "ERREUR GLOBALE :\n" +
-          JSON.stringify(error)
+        "ERREUR GLOBALE:\n" +
+          JSON.stringify(error, null, 2)
       );
     }
   };
