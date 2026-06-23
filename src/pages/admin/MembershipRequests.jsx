@@ -116,6 +116,7 @@ setLoading(false);
   // };
 
   const approveRequest = async (request) => {
+    console.log("REQUEST =", request);
     try {
       console.log("===== APPROVE REQUEST =====");
       console.log("REQUEST:", request);
