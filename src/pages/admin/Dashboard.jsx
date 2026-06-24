@@ -42,32 +42,98 @@ setAllRequests(all || []);
 
 };
 
-const approveRequest = async (id, userId) => {
-try {
-await supabase
-.from("membership_requests")
-.update({
-status: "approved",
-})
-.eq("id", id);
+  const approveRequest = async (request) => {
+    try {
 
+      const { data: existingMember } =
+        await supabase
+          .from("members")
+          .select("*")
+          .eq("user_id", request.user_id)
+          .maybeSingle();
 
-  await supabase
-    .from("profiles")
-    .update({
-      role: "member",
-    })
-    .eq("id", userId);
+      let memberId;
 
-  fetchMembers();
-  fetchRequests();
+      if (!existingMember) {
 
-} catch (error) {
-  console.error(error);
-}
+        const {
+          data: memberData,
+          error: memberError,
+        } = await supabase
+          .from("members")
+          .insert({
+            user_id: request.user_id,
+            full_name: request.full_name,
+            email: request.email,
+            phone: request.phone,
+            address: request.address,
+            photo_url: request.photo_url,
+          })
+          .select()
+          .single();
 
+        if (memberError) throw memberError;
 
-};
+        memberId = memberData.id;
+
+      } else {
+
+        memberId = existingMember.id;
+
+      }
+
+      const currentYear =
+        new Date().getFullYear();
+
+      const { data: contribution } =
+        await supabase
+          .from("contributions")
+          .select("id")
+          .eq("member_id", memberId)
+          .eq("year", currentYear)
+          .maybeSingle();
+
+      if (!contribution) {
+
+        await supabase
+          .from("contributions")
+          .insert({
+            member_id: memberId,
+            year: currentYear,
+          });
+
+      }
+
+      await supabase
+        .from("membership_requests")
+        .update({
+          status: "approved",
+          approved_at:
+            new Date().toISOString(),
+        })
+        .eq("id", request.id);
+
+      await supabase
+        .from("profiles")
+        .update({
+          role: "member",
+        })
+        .eq("id", request.user_id);
+
+      fetchMembers();
+      fetchRequests();
+
+      alert(
+        "✅ Membre approuvé avec succès"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+      alert(error.message);
+
+    }
+  };
 
 const rejectRequest = async (id) => {
 try {
@@ -161,11 +227,8 @@ return ( <div className="p-4 md:p-6">
             <div className="flex gap-2 mt-4 md:mt-0">
 
               <button
-                onClick={() =>
-                  approveRequest(
-                    req.id,
-                    req.user_id
-                  )
+               onClick={() =>
+                  approveRequest(req)
                 }
                 className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg"
               >
